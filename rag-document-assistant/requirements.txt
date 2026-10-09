@@ -1,0 +1,26 @@
+# Exact pins so the environment is reproducible. Resolved together on Python 3.11 / Windows (2026-10-09).
+# Upgrade deliberately (one package at a time, then re-run the tests), not by accident.
+
+# --- Backend API ---------------------------------------------------------------
+fastapi==0.143.0
+uvicorn==0.54.0
+python-multipart==0.0.32   # FastAPI needs this to accept file uploads (UploadFile)
+pydantic==2.14.0
+
+# --- PDF text extraction ---------------------------------------------------------
+pymupdf==1.28.2
+
+# --- Embeddings + vector database ------------------------------------------------
+sentence-transformers==6.1.0
+torch==2.14.1              # on Windows, the PyPI wheel is the CPU build - enough for a small embedding model
+chromadb==1.5.9
+
+# --- HTTP: LLM API calls, and Streamlit -> FastAPI calls --------------------------
+httpx==0.28.1
+
+# --- Frontend ----------------------------------------------------------------------
+streamlit==1.65.0
+
+# --- Configuration + tests ---------------------------------------------------------
+python-dotenv==1.2.4
+pytest==9.1.1

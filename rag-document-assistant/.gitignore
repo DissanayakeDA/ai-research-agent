@@ -1,0 +1,15 @@
+# Secrets
+.env
+
+# Your uploaded PDFs and the generated vector index (private, and rebuildable from the PDFs)
+data/*
+!data/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Tooling
+.pytest_cache/

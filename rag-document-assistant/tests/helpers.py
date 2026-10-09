@@ -72,3 +72,22 @@ class FakeLLM:
         if self.error:
             raise self.error
         return LLMReply(content=self.reply, prompt_tokens=100, completion_tokens=20, finish_reason="stop")
+
+
+def make_services(data_dir, llm: FakeLLM):
+    """The API's services wired to fakes: real ChromaDB in `data_dir`, fake embedder and LLM."""
+    from app.config import load_settings
+    from app.generator import Generator
+    from app.main import Services
+    from app.pipeline import RagPipeline
+    from app.retriever import Retriever
+    from app.vector_store import VectorStore
+
+    settings = load_settings({
+        "DATA_DIR": str(data_dir), "CHUNK_SIZE": "200", "CHUNK_OVERLAP": "20",
+        "MAX_UPLOAD_MB": "1", "LLM_API_KEY": "sk-secret-test",
+    })
+    embedder = FakeEmbedder()
+    store = VectorStore(settings.chroma_dir, "test-collection")
+    pipeline = RagPipeline(Retriever(embedder, store), Generator(llm))
+    return Services(settings=settings, embedder=embedder, store=store, pipeline=pipeline)

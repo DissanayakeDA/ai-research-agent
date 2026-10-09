@@ -74,7 +74,9 @@ def print_answer(answer: Answer, show_context: bool, show_reasoning: bool) -> No
         print(textwrap.fill(paragraph, WIDTH, initial_indent="    ", subsequent_indent="    ") if paragraph.strip() else "")
 
     if answer.sources:
-        print("\nSources cited:")
+        # A "not found" answer may still cite passages while describing what they DO cover;
+        # don't present those as evidence for an answer.
+        print("\nSources cited:" if answer.found else "\nPassages mentioned (none of them answers the question):")
         for chunk in answer.sources:
             print(f"    [{chunk.rank}] {chunk.filename}, {_pages(chunk.page_start, chunk.page_end)}  (score {chunk.score:.3f})")
     uncited = [chunk.rank for chunk in answer.retrieved if chunk.rank not in answer.cited]

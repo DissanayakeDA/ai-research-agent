@@ -27,10 +27,8 @@ class RagPipeline:
         return answer.model_copy(update={"retrieval_ms": retrieval_ms})
 
 
-def build_pipeline(settings: Settings) -> RagPipeline:
-    """Create the real components from settings. Loads the embedding model (a few seconds)."""
-    retriever = Retriever(Embedder(settings.embedding_model), open_store(settings))
-    llm = LLMClient(
+def build_llm_client(settings: Settings) -> LLMClient:
+    return LLMClient(
         base_url=settings.llm_base_url,
         model=settings.llm_model,
         api_key=settings.llm_api_key.get_secret_value(),
@@ -38,4 +36,9 @@ def build_pipeline(settings: Settings) -> RagPipeline:
         max_tokens=settings.llm_max_tokens,
         timeout=settings.llm_timeout_seconds,
     )
-    return RagPipeline(retriever, Generator(llm))
+
+
+def build_pipeline(settings: Settings) -> RagPipeline:
+    """Create the real components from settings. Loads the embedding model (a few seconds)."""
+    retriever = Retriever(Embedder(settings.embedding_model), open_store(settings))
+    return RagPipeline(retriever, Generator(build_llm_client(settings)))

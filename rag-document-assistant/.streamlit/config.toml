@@ -1,0 +1,10 @@
+# Read by `streamlit run` when it is started from this project folder.
+
+[browser]
+gatherUsageStats = false  # don't send usage statistics to Streamlit
+
+[server]
+# Only this computer can open the UI. Streamlit's default (every network interface) would let
+# anyone on your Wi-Fi upload files and ask questions - spending your LLM API quota.
+address = "localhost"
+maxUploadSize = 20  # MB per file in the browser; the API also enforces MAX_UPLOAD_MB

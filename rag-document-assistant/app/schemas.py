@@ -7,7 +7,7 @@ Pydantic validates them, and in Phase 6 FastAPI can return them as JSON directly
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 
 
 class Page(BaseModel):
@@ -96,6 +96,7 @@ class Answer(BaseModel):
     retrieval_ms: float = 0.0
     generation_ms: float = 0.0
 
+    @computed_field  # included when the answer is sent as JSON by the API
     @property
     def sources(self) -> list[RetrievedChunk]:
         """The retrieved passages the answer actually cites."""

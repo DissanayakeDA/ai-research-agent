@@ -61,8 +61,9 @@ rag-document-assistant/
 │   ├── llm_client.py       HTTP client for any OpenAI-compatible API (retries, rate limits)
 │   ├── generator.py        grounded prompt, citation parsing -> Answer
 │   ├── pipeline.py         question -> retrieve -> generate
-│   └── main.py             FastAPI endpoints                          (Phase 6)
-├── frontend/streamlit_app.py                                          (Phase 6)
+│   └── main.py             FastAPI: /health, /documents (list + upload), /ask
+├── frontend/streamlit_app.py  browser UI; talks to the API over HTTP only
+├── .streamlit/config.toml  UI settings (localhost only, no usage statistics)
 ├── scripts/                developer tools, not part of the app
 │   ├── check_env.py        verifies Python, packages, config, storage
 │   ├── inspect_chunks.py   shows extracted text and chunks for a PDF or a folder
@@ -74,8 +75,8 @@ rag-document-assistant/
 ├── tests/
 ├── data/                   git-ignored: private documents and generated files
 │   ├── pdfs/               your source PDFs
-│   ├── uploads/            PDFs uploaded through the UI               (Phase 6)
-│   └── chroma/             the vector index                           (Phase 3)
+│   ├── uploads/            copies of PDFs uploaded through the UI
+│   └── chroma/             the vector index
 ├── .env.example
 └── requirements.txt
 ```
@@ -103,13 +104,25 @@ computed locally. To keep everything on your machine instead, use
 [Ollama](https://ollama.com): run `ollama pull llama3.2:3b`, set
 `LLM_BASE_URL=http://localhost:11434/v1`, `LLM_MODEL=llama3.2:3b` and leave `LLM_API_KEY` empty.
 
+## Run the app
+
+Two terminals, both in the project folder with the virtual environment active:
+
+```powershell
+uvicorn app.main:app                      # terminal 1: the API (interactive docs: http://127.0.0.1:8000/docs)
+streamlit run frontend/streamlit_app.py   # terminal 2: the UI (opens http://localhost:8501)
+```
+
+Both only listen on this computer. Without the UI, the same pipeline runs from the command line:
+`python -m scripts.ingest data\pdfs`, then `python -m scripts.ask "your question"`.
+
 ## Status
 
 - [x] Phase 1: architecture and environment setup
 - [x] Phase 2: PDF extraction and chunking
 - [x] Phase 3: embeddings and ChromaDB
 - [x] Phase 4: retrieval and similarity search
-- [ ] Phase 5: answer generation with source references
+- [x] Phase 5: answer generation with source references
 - [ ] Phase 6: FastAPI + Streamlit
 - [ ] Phase 7: tests and evaluation
 - [ ] Phase 8: documentation and experiments
